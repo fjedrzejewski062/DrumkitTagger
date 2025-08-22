@@ -1,0 +1,52 @@
+package com.example.DrumkitTagger.service;
+
+import com.example.DrumkitTagger.entity.User;
+import com.example.DrumkitTagger.repository.UserRepository;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Service
+public class CustomOAuth2UserService extends OidcUserService {
+
+    private final UserRepository userRepository;
+
+    public CustomOAuth2UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public OidcUser loadUser(OidcUserRequest userRequest) {
+        OidcUser oidcUser = super.loadUser(userRequest);
+
+        String email = oidcUser.getEmail();
+        String username = generateUsernameFromEmail(email);
+
+        User user = userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = new User();
+            newUser.setEmail(email);
+            newUser.setUsername(username);
+            newUser.setPassword(UUID.randomUUID().toString());
+            newUser.setProfileImage(oidcUser.getPicture());
+            newUser.setRegistrationDate(LocalDateTime.now());
+            newUser.setLastLogin(LocalDateTime.now());
+            newUser.setRole("USER");
+            return userRepository.save(newUser);
+        });
+
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+
+        return oidcUser;
+    }
+
+    private String generateUsernameFromEmail(String email) {
+        String raw = email.substring(0, email.indexOf("@"));
+        return raw.replaceAll("[^a-zA-Z0-9_.-]", "");
+    }
+}
+
