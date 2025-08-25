@@ -45,11 +45,11 @@ public class User {
     private LocalDateTime lastLogin;
 
     /** Jeden user -> wielu buyerów */
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Buyer> buyers = new ArrayList<>();
 
     /** Jeden user -> wiele drumkitów */
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DrumKit> drumKits = new ArrayList<>();
 
     public Long getId() {

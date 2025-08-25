@@ -32,7 +32,7 @@ public class DrumKit {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "uploaded_by", nullable = false)
     private User uploadedBy;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

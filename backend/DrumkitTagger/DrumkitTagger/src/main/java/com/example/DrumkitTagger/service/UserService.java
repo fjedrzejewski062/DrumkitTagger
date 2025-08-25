@@ -46,6 +46,11 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
     public User update(User user) {
         return userRepository.save(user);
     }

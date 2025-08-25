@@ -19,13 +19,13 @@ public class BuyerService {
 
     /** Tworzy nowego Buyera powiązanego z Userem */
     public Buyer createBuyer(User user, Buyer buyer) {
-        buyer.setUser(user);
+        buyer.setCreatedBy(user);
         return buyerRepository.save(buyer);
     }
 
     /** Pobiera wszystkich Buyerów danego Usera */
     public List<Buyer> getBuyersByUser(User user) {
-        return buyerRepository.findByUser(user);
+        return buyerRepository.findByCreatedBy(user);
     }
 
     /** Pobiera Buyera po ID */
@@ -43,11 +43,8 @@ public class BuyerService {
         return buyerRepository.save(buyer);
     }
 
-    /** Soft delete Buyera */
+    /** Usuwa Buyera z bazy */
     public void deleteBuyer(Buyer buyer) {
-        // jeśli soft-delete jest potrzebny, np. ustawiamy nickname/tag na DELETED
-        buyer.setNickname("DELETED-BUYER-" + buyer.getId());
-        buyer.setTag("00000");
-        buyerRepository.save(buyer);
+        buyerRepository.delete(buyer);
     }
 }
